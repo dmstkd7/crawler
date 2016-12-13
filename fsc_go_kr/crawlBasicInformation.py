@@ -1,57 +1,79 @@
 
 
+from selenium import webdriver
 import codecs
-import requests
-import time
 import uuid
+import json
+
 
 INFINITE_NUM = 987654321
 
+driver = webdriver.PhantomJS(executable_path="/usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
+
+
 def crawlBasicInformation(url, startDay, endDay):
 
-    currentUrl = url + "&strt_dt=" + str(startDay) + "&end_dt=" + str(endDay)
-    countOfCrawlingItem = 0
-    saveUrlList = []
 
     file = codecs.open('fsc_list.json', 'a', encoding='utf-8')
 
+
+    urlIncludeDay = url + "&strt_dt=" + str(startDay) + "&end_dt=" + str(endDay)
+
     for page in range(1, INFINITE_NUM):
-        # 현재 페이지를 갈 수 있게 합니다
-        currentUrl = url + "&page=" + str(page)
+        currentUrl = urlIncludeDay + "&page=" + str(page)
+        driver.get(currentUrl)
 
-        response = requests.get(currentUrl)
-        time.sleep(10)
+        #단순히 제목을 가져오는 부분이지만 제목이 몇 개 인지 파악하여 page당 몇 개의 리스트를 크롤링 해야 하는지
+        #알려주는 지표가 된다.
+        numOftitles = len(driver.find_elements_by_class_name("description"))
 
-        for info in range(1, 16):
-            # 파일 네임 무조건 할것 !!!!
-
-            print
-            "path"
-            print
-            response.xpath('tr[' + str(info) + ']/' + 'td[1]/text()').extract()
-
-            item = {}
-            item['title'] = response.xpath('tr[' + str(info) + ']/' + 'td[2]/a/text()').extract()[0]
-            item['publish_place'] = response.xpath('tr[' + str(info) + ']/' + 'td[3]/text()').extract()[0]
-            item['date'] = response.xpath('tr[' + str(info) + ']/' + 'td[4]/text()').extract()[0]
-            item['search_on'] = search_on
-            item['link_directory'] = link_directory
-            item['tag'] = "경제금융"
-            item['content'] = ""
-            item['count_query'] = 0
-            item['link'] = url
-            item['company_name'] = ""
-            item['report_name'] = ""
-            item['target_site_name'] = "fsc"
-
-        for sel in response.xpath('tr[' + str(info) + ']/' + 'td[6]/a'):
-            isPdf = "PDF 문서" == sel.xpath('img/@alt').extract()[0]
-            if isPdf:
-                item['pdf_download_link'] = 'http://www.fsc.go.kr' + str(sel.xpath('@href').extract()[0])
-                item['file_name'] = ''.join(str(uuid.uuid1()).split('-'))
-                line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-                file.write(line)
-
-        if int(response.xpath('tr[' + str(info) + ']/' + 'td[1]/text()').extract()[0]) == 1:
-            file.close()
+        if (numOftitles == 0):
+            print (str(currentUrl) + "부분이 끝이 났습니다 다음으로 이동하겠습니다")
             return
+
+        num = 0
+        for i in range(1, numOftitles):
+
+            currentElementTitle = driver.find_element_by_xpath(
+                "//*[@id='contents']/div[2]/table/tbody/tr[" + str(i) + "]/td[2]")
+            currentElementDate = driver.find_element_by_xpath(
+                "//*[@id='contents']/div[2]/table/tbody/tr[" + str(i) + "]/td[4]")
+            currentElementAttach = driver.find_elements_by_xpath(
+                "//*[@id='contents']/div[2]/table/tbody/tr[" + str(i) + "]/td[6]/a")
+            currentElementAttachCheck = driver.find_elements_by_xpath(
+                "//*[@id='contents']/div[2]/table/tbody/tr[" + str(i) + "]/td[6]/a/img")
+            item = {}
+            item['title'] = currentElementTitle.text
+            item['publish_place'] = "금융위원회"
+            item['document_type'] = "pdf"
+            item['search_on'] = "1"
+            item['file_name'] = ''.join(str(uuid.uuid1()).split('-'))
+            item['count_query'] = 0
+            item['report_name'] = currentElementTitle.text
+            item['content'] = ''
+            item['tag'] = ["금융정책"]
+            item['link'] = currentUrl
+            item['company_name'] = ""
+            item['date'] = currentElementDate.text
+            item['pdf_download_link'] = ''
+            item['target_site_name'] = "fsc"
+            item['link_directory'] = '/home/data/fsc/'
+            item['page_number'] = ''
+
+
+            #첨부파일이 몇 개 인지 표시하기 위한 변수
+            numOfAttach = 0
+
+            # pdf파일을 여기서 새로 받아야 합니다
+            for it in currentElementAttach:
+                isPdf = u'PDF 문서' == currentElementAttachCheck[numOfAttach].get_attribute("alt")
+
+                numOfAttach = numOfAttach + 1
+                if (isPdf == True):
+                    # item['pdf_download_link'].append(it.get_attribute("href"))
+                    item['pdf_download_link'] = it.get_attribute("href")
+                    item['file_name'] = ''.join(str(uuid.uuid1()).split('-'))
+                    line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+                    file.write(line)
+
+    file.close()

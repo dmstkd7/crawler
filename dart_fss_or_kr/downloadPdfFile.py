@@ -21,7 +21,7 @@ URL_JSON_FILE_PATH = 'dart_list.json'
 '''
 def downloadPdfFile(directoryPath):
 
-    numOfDownloadingFile = 0
+    numOfDownloadedFile = 0
     with codecs.open(URL_JSON_FILE_PATH, 'rU', 'utf-8') as f:
         for line in f:
             time.sleep(10)
