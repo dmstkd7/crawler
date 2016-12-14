@@ -37,7 +37,7 @@ class Dart_fss_or_kr:
         startDartCrawling의 경우는 URL을 JSON으로 저장시키고 이후 JSON파일을 한 줄씩
         읽어 PDF를 다운로드 시킵니다
     '''
-    def startDartCrawling(self):
+    def startCrawling(self):
         print("공시자료 Dart를 Crawling 합니다. URL을 가져오고 이후 PDF를 다운로드 받습니다.")
         crawlBasicInformation(self.startDay, self.endDay)
         print("URL 자료를 잘 저장시켰습니다. 앞으로 PDF를 다운로드 시키겠습니다")

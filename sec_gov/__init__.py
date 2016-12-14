@@ -28,20 +28,21 @@ from .downloadPdfFile import downloadPdfFile
 '''
 
 
-class Dart_fss_or_kr:
+class Sec_gov:
     def __init__(self, startDay, endDay):
-        #이렇게 하는게 맞나???
-        self.PATH_DIRECTORY = '/home/data/dart/2016/'
-        self.startDay = startDay
-        self.endDay = endDay
+        #이렇게 하는게 맞나?????
+        self.PATH_DIRECTORY = '/home/data/sec/2016/'
+        print("sec를 크롤링 하기 시작하였습니다")
+
 
     '''
         startDartCrawling의 경우는 URL을 JSON으로 저장시키고 이후 JSON파일을 한 줄씩
         읽어 PDF를 다운로드 시킵니다
     '''
-    def startDartCrawling(self):
+
+    def startCrawling(self):
         print("공시자료 Dart를 Crawling 합니다. URL을 가져오고 이후 PDF를 다운로드 받습니다.")
-        crawlBasicInformation(self.startDay, self.endDay)
+        crawlBasicInformation()
         print("URL 자료를 잘 저장시켰습니다. 앞으로 PDF를 다운로드 시키겠습니다")
         downloadPdfFile(self.PATH_DIRECTORY)
 
@@ -51,7 +52,7 @@ class Dart_fss_or_kr:
         단순히 URL만 크롤링하는 것입니다
     '''
     def startOnlyUrlCrawling(self):
-        crawlBasicInformation(self.startDay, self.endDay)
+        crawlBasicInformation()
 
 
 

@@ -66,9 +66,9 @@ from .downloadPdfFile import downloadPdfFile
 
 
 class Fsc_go_kr:
-    def __init__(self, startDay, endDay):
+    def __init__(self, startDay, endDay, directoryPath):
         #이렇게 하는게 맞나???
-        self.PATH_DIRECTORY = '/home/data/dart/2016/'
+        self.directoryPath = directoryPath
         self.startDay = startDay
         self.endDay = endDay
         self.downloadList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11]
@@ -91,12 +91,12 @@ class Fsc_go_kr:
         startDartCrawling의 경우는 URL을 JSON으로 저장시키고 이후 JSON파일을 한 줄씩
         읽어 PDF를 다운로드 시킵니다
     '''
-    def startDartCrawling(self):
+    def startCrawling(self):
         print("FSC 금융위원회를 Crawling 합니다. URL을 가져오고 이후 PDF를 다운로드 받습니다.")
         for numOfItem in self.downloadList:
             crawlBasicInformation(self.menuList[numOfItem], self.startDay, self.endDay)
         print("URL 자료를 잘 저장시켰습니다. 앞으로 PDF를 다운로드 시키겠습니다")
-        downloadPdfFile(self.PATH_DIRECTORY)
+        downloadPdfFile(self.directoryPath)
 
 
 
@@ -116,6 +116,6 @@ class Fsc_go_kr:
     '''
     def startOnlyPdfCrawling(self):
         print("FSC 금융위원회 PDF만 다운로드 합니다. Crawling은 하지 않습니다")
-        downloadPdfFile(self.PATH_DIRECTORY)
+        downloadPdfFile(self.directoryPath)
 
 
