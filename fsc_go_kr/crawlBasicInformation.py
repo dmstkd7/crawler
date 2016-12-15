@@ -4,12 +4,12 @@ from selenium import webdriver
 import codecs
 import uuid
 import json
-import datetime
 
-from module import LogManage
+from module import LogManager
 
-logManage = LogManage()
+logManager = LogManager.LogManager()
 INFINITE_NUM = 987654321
+URL_JSON_FILE_PATH = './fsc_go_kr/fsc_list.json'
 
 driver = webdriver.PhantomJS(executable_path="/usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
 
@@ -17,7 +17,7 @@ driver = webdriver.PhantomJS(executable_path="/usr/local/share/phantomjs-2.1.1-l
 def crawlBasicInformation(url, startDay, endDay, directoryPath):
 
     try:
-        file = codecs.open('fsc_list.json', 'a', encoding='utf-8')
+        file = codecs.open(URL_JSON_FILE_PATH, 'a', encoding='utf-8')
 
         urlIncludeDay = url + "&strt_dt=" + str(startDay) + "&end_dt=" + str(endDay)
 
@@ -30,7 +30,7 @@ def crawlBasicInformation(url, startDay, endDay, directoryPath):
             numOftitles = len(driver.find_elements_by_class_name("description"))
 
             if (numOftitles == 0):
-                logManage.writeInfo(str(currentUrl)) + "부분이 끝났습니다 다음으로 이동하겠습니다"
+                logManager.writeInfo(str(currentUrl) + "부분이 끝났습니다 다음으로 이동하겠습니다")
                 print (str(currentUrl) + "부분이 끝이 났습니다 다음으로 이동하겠습니다")
                 return
 
@@ -63,10 +63,6 @@ def crawlBasicInformation(url, startDay, endDay, directoryPath):
                 item['page_number'] = ''
                 item['date'] = currentElementDate.text
 
-                time_temp = item['date'].split('-')
-                time = datetime.datetime(int(time_temp[0]), int(time_temp[1]), int(time_temp[2]))
-                item['date'] = time
-
 
                 #첨부파일이 몇 개 인지 표시하기 위한 변수
                 numOfAttach = 0
@@ -86,5 +82,5 @@ def crawlBasicInformation(url, startDay, endDay, directoryPath):
         file.close()
 
     except:
-        logManage.writeError(" fsc, crawlBasicInformation.py,  error")
+        logManager.writeError(" fsc, crawlBasicInformation.py,  error")
         return

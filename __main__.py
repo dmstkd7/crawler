@@ -33,7 +33,15 @@ FSC_ENDDAY = 20161210
 PDF_SAVE_PATH_DIRECTORY = "/home/data/fsc/2016"
 
 fsc_go_kr = fsc_go_kr.Fsc_go_kr(FSC_STARTDAY, FSC_ENDDAY, PDF_SAVE_PATH_DIRECTORY)
+
+#URL, PDF 둘다 다운로드 할 때 사용합니다
 fsc_go_kr.startCrawling()
+
+#PDF만 다운로드 합니다
+#fsc_go_kr.startOnlyPdfCrawling()
+
+#URL만 긁어옵니다
+#fsc_go_kr.startOnlyUrlCrawling()
 
 
 

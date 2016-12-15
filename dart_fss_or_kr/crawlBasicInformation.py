@@ -9,6 +9,7 @@ import copy
 import uuid
 import codecs
 import requests
+import datetime
 from scrapy.http import HtmlResponse
 from scrapy.selector import Selector
 
@@ -30,6 +31,7 @@ AUTHENTICATION_KEY = '20cf7f9d2fa26ab78d7cd2f2079ae91825b6599d'
 INFINITE_NUM = 987654321
 CHECK_CAN_SEARCH = '1'
 LINK_DIRECTORY = '/home/data/dart/2016'
+URL_JSON_FILE_PATH = './dart_fss_or_kr/dart_list.json'
 
 
 '''
@@ -137,7 +139,7 @@ def crawling(dartType, tagName1,tagName2, startDay, endDay):
             saveUrlList.append(rcp_no)
 
     # -----------2부 웹페이지 url을 가지고 기본정보들을 가져오는 부분 -----------
-    file = codecs.open('./dart_fss_or_kr/dart_list.json', 'a', encoding='utf-8')
+    file = codecs.open(URL_JSON_FILE_PATH, 'a', encoding='utf-8')
 
     for countOfNum in range(countOfCrawlingItem):
         print (str(countOfNum) + "번째 진행되고 있습니다. 곧 완료 될것입니다")
@@ -155,7 +157,6 @@ def crawling(dartType, tagName1,tagName2, startDay, endDay):
         item['title'] = ''
         item['publish_place'] = tempData[0]
         item['report_name'] = tempData[1]
-        item['date'] = tempData[2]
         tempLink = ''.join(sel.xpath('//*[@id="north"]/div[2]/ul/li[1]/a/@onclick').extract())
         item['link'] = int(tempLink[17:31])
         tempPdfDownloadLink = ''.join(sel.xpath('//*[@id="north"]/div[2]/ul/li[1]/a/@onclick').extract())
@@ -169,6 +170,8 @@ def crawling(dartType, tagName1,tagName2, startDay, endDay):
         item['tag'] = [tagName1, tagName2]
         item['count_query'] = 0
         item['document_type'] = 'pdf'
+        item['date'] = tempData[2]
+
 
         line = json.dumps(dict(item), ensure_ascii=False) + "\n"
         file.write(line)

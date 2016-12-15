@@ -94,7 +94,7 @@ class Fsc_go_kr:
     def startCrawling(self):
         print("FSC 금융위원회를 Crawling 합니다. URL을 가져오고 이후 PDF를 다운로드 받습니다.")
         for numOfItem in self.downloadList:
-            crawlBasicInformation(self.menuList[numOfItem], self.startDay, self.endDay)
+            crawlBasicInformation(self.menuList[numOfItem], self.startDay, self.endDay, self.directoryPath)
         print("URL 자료를 잘 저장시켰습니다. 앞으로 PDF를 다운로드 시키겠습니다")
         downloadPdfFile(self.directoryPath)
 
@@ -106,7 +106,7 @@ class Fsc_go_kr:
     def startOnlyUrlCrawling(self):
         print("FSC 금융위원회를 Crawling 만 합니다. PDF는 다운로드 하지 않습니다.")
         for numOfItem in self.downloadList:
-            crawlBasicInformation(self.menuList[numOfItem], self.startDay, self.endDay)
+            crawlBasicInformation(self.menuList[numOfItem], self.startDay, self.endDay, self.directoryPath)
 
 
 

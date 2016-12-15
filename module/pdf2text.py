@@ -1,28 +1,37 @@
 import subprocess
 
 
-class Pdf2Text:
+def pdf2txt(pdf_file):
+    NODE_EXECUTABLE = 'node'
+    PDFJS_GETINFO = ('/usr/local/pdf.js/examples/node'
+                     + '/getinfo_txtonly.js')
 
-    def __init__(self):
-        pass
+    # python2:
+    # proc = subprocess.Popen([NODE_EXECUTABLE, PDFJS_GETINFO, pdf_file],
+    #                         stdout=subprocess.PIPE)
+    # outs = iter(proc.stdout.readline, '')
 
-    def pdf2text(self, file_name, file_path):
-        chk = 0
-        try:
-            NODE_EXECUTABLE = 'node'
-            PDFJS_GETINFO = ('/usr/local/src/sungjin/pdf.js/' + 'examples/node/getinfo_txtonly.js')
-            filePath = file_path + file_name
-            proc = subprocess.Popen([NODE_EXECUTABLE, PDFJS_GETINFO, filePath],stdout=subprocess.PIPE)
-            texts = list()
-            for line in iter(proc.stdout.readline, ''):
-                texts.append(line)
+    # Python3
+    proc = subprocess.Popen([NODE_EXECUTABLE, PDFJS_GETINFO, pdf_file],
+                            stdout=subprocess.PIPE)
+    outs, errs = proc.communicate()
 
-           
-        except:
-            print ("pdf to text error")
-            chk = 1
-        if(chk == 0):
-            print ("pdf2text가 정상 출력되었습니다")
-            return texts
-        else :
-            return "pdf2textError"
+    texts = list()
+
+    # Python2
+    # for line in outs:
+    # Python3
+    for line in outs.decode('utf-8').splitlines():
+        texts.append(line)
+
+    return texts
+
+
+if __name__ == '__main__':
+    texts = pdf2txt('./test1.pdf')
+
+    for text in texts:
+        print(text)
+        print('------------------------------------------------------')
+
+    print("number of pages = {}".format(len(texts)))

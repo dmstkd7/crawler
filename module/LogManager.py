@@ -4,7 +4,7 @@ import logging.handlers
 SAVE_LOG_HISTORY_PATH = './log/history.log'
 
 
-class LogManage:
+class LogManager:
     def __init__(self):
         # logger 인스턴스를 생성 및 로그 레벨 설정
         self.logger = logging.getLogger("crumbs")
